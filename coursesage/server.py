@@ -33,21 +33,23 @@ def make_handler(agent: CourseAgent, lock: threading.Lock):
             if agent.settings.verbose:
                 print(f"[http] {fmt % args}")
 
-        def _send(self, code: int, body: bytes, content_type: str) -> None:
+        def _send(self, code: int, body: bytes, content_type: str, cache: bool = True) -> None:
             self.send_response(code)
             self.send_header("Content-Type", content_type)
             self.send_header("Content-Length", str(len(body)))
+            if not cache:
+                self.send_header("Cache-Control", "no-store")
             self.end_headers()
             self.wfile.write(body)
 
         def _json(self, code: int, payload: dict) -> None:
-            self._send(code, json.dumps(payload, ensure_ascii=False).encode("utf-8"), "application/json")
+            self._send(code, json.dumps(payload, ensure_ascii=False).encode("utf-8"), "application/json", cache=False)
 
         def do_GET(self) -> None:  # noqa: N802
             if self.path in {"/", "/index.html"}:
-                self._send(200, (STATIC / "index.html").read_bytes(), "text/html; charset=utf-8")
+                self._send(200, (STATIC / "index.html").read_bytes(), "text/html; charset=utf-8", cache=False)
             elif self.path == "/avatar.png":
-                self._send(200, (STATIC / "avatar.png").read_bytes(), "image/png")
+                self._send(200, (STATIC / "avatar.png").read_bytes(), "image/png", cache=False)
             elif self.path == "/api/outline":
                 self._json(200, {"chapters": agent.kb.outline()})
             elif self.path == "/api/health":
