@@ -185,3 +185,9 @@ note persistence, and both agent modes against `examples/mock_llm.py`. No API ke
 - Add a tool that runs a learner's solution against test cases (pytest subprocess) for
   auto-grading exercises.
 - Point `build_kb.py` at a different transcript and the whole agent retargets to that course.
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE). Built by **Aena Ali**.
