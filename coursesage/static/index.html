@@ -19,7 +19,7 @@
   }
   header {
     padding: 18px 24px; border-bottom: 1px solid var(--line);
-    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    display: flex; align-items: center; gap: 10px 14px; flex-wrap: wrap;
     background: rgba(13,17,23,.85); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 5;
   }
   .logo { font-weight: 700; letter-spacing: .3px; }
@@ -27,6 +27,7 @@
   .badge {
     font-size: 12px; color: var(--muted); border: 1px solid var(--line);
     border-radius: 999px; padding: 2px 10px;
+    max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   main { flex: 1; width: 100%; max-width: 900px; margin: 0 auto; padding: 22px 20px 140px; }
   .msg { display: flex; gap: 12px; margin-bottom: 22px; }
@@ -77,6 +78,14 @@
   .hint { max-width: 900px; margin: 6px auto 0; font-size: 11px; color: var(--muted); text-align: right; }
   .typing { color: var(--muted); font-size: 13px; }
   .err { color: #ff7b72; }
+  .welcome { text-align: center; padding: 26px 8px 10px; }
+  .welcome-avatar {
+    width: 72px; height: 72px; border-radius: 50%; object-fit: cover;
+    border: 1px solid var(--line); margin-bottom: 14px;
+  }
+  .welcome h1 { font-size: 21px; font-weight: 650; margin: 0 0 8px; letter-spacing: .2px; }
+  .welcome p { color: var(--muted); font-size: 14px; max-width: 520px; margin: 0 auto 20px; }
+  .welcome .chips { justify-content: center; }
 </style>
 </head>
 <body>
@@ -89,13 +98,18 @@
 </header>
 
 <main id="chat">
-  <div class="chips" id="chips">
-    <div class="suggest">Explain slicing vs indexing with examples</div>
-    <div class="suggest">Why is a list mutable but a tuple not?</div>
-    <div class="suggest">Quiz me on dictionaries (5 questions)</div>
-    <div class="suggest">7-day plan to finish the Python part</div>
-    <div class="suggest">What is RAG and how is it different from fine-tuning?</div>
-  </div>
+  <section class="welcome" id="welcome">
+    <img class="welcome-avatar" src="/avatar.png" alt="Aena Ali" />
+    <h1>Assalamu alaikum, Aena</h1>
+    <p>I answer only from this 14-hour Python + AI course. Every answer points back to the exact video timestamp, so you can check it yourself.</p>
+    <div class="chips" id="chips">
+      <div class="suggest">Explain slicing vs indexing with examples</div>
+      <div class="suggest">Why is a list mutable but a tuple not?</div>
+      <div class="suggest">Quiz me on dictionaries (5 questions)</div>
+      <div class="suggest">7-day plan to finish the Python part</div>
+      <div class="suggest">What is RAG and how is it different from fine-tuning?</div>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -118,7 +132,8 @@ if (location.protocol === 'file:') {
   badge.style.color = 'var(--warn)';
 }
 fetch('/api/health').then(r => r.json()).then(d => {
-  badge.textContent = d.model + ' · ' + d.kb.chapters + ' chapters';
+  badge.textContent = d.provider + ' · ' + d.model + ' · ' + d.kb.chapters + ' chapters';
+  badge.title = 'endpoint: ' + d.base_url;
 }).catch(() => { badge.textContent = 'backend offline — run: python run.py serve'; badge.style.color = 'var(--warn)'; });
 
 function esc(s) {
@@ -188,7 +203,9 @@ function addMessage(role, content, tools, isError) {
 
 async function ask(text) {
   if (!text.trim()) return;
-  if (chips) chips.remove();
+  const welcome = document.getElementById('welcome');
+  if (welcome) welcome.remove();
+  else if (chips) chips.remove();
   addMessage('user', text);
   input.value = '';
   autosize();

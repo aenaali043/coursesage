@@ -51,7 +51,14 @@ def make_handler(agent: CourseAgent, lock: threading.Lock):
             elif self.path == "/api/outline":
                 self._json(200, {"chapters": agent.kb.outline()})
             elif self.path == "/api/health":
-                self._json(200, {"ok": True, "model": agent.settings.describe(), "kb": agent.kb.stats()})
+                s = agent.settings
+                self._json(200, {
+                    "ok": True,
+                    "provider": s.provider,
+                    "model": s.model,
+                    "base_url": s.base_url,
+                    "kb": agent.kb.stats(),
+                })
             else:
                 self._json(404, {"error": "not found"})
 
