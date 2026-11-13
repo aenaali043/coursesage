@@ -7,6 +7,12 @@ runs code to check what Python actually does, cites the timestamp it used, and c
 quizzes and study plans to disk. It is grounded in **"Best Python + AI Full Course"**
 (`youtube.com/watch?v=J9BI0jGOds8`, 13 h 02 m):
 
+![A real CourseSage answer: retrieved passage, code examples, and links back to video timestamps](docs/chat.png)
+
+The first screen lists the chapters the agent knows and the questions it is best at:
+
+![CourseSage welcome screen with suggested questions](docs/welcome.png)
+
 | track | time range | content |
 |---|---|---|
 | Python | 00:00:00 – 10:48:00 | install → data types → strings, slicing → operators → if/elif → loops → lists, tuples, sets, dicts → comprehensions → functions → `*args`/`**kwargs` → scope → first-class functions → lambda |
