@@ -1,0 +1,8 @@
+# CourseSage has no required third-party packages: it runs on the Python
+# standard library (3.10+). Everything below is optional and only needed for
+# the extras listed next to it.
+
+# Nothing is required for: chat, retrieval, tools, web UI, tests.
+
+# Optional: local models through Ollama -> install Ollama itself, then
+#   ollama pull qwen2.5:7b

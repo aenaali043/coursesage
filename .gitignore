@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.env
+data/notes.md
+*.log
+.venv/
+venv/
+.vscode/

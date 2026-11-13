@@ -1,0 +1,320 @@
+[
+  {
+    "start": "00:01:46",
+    "title": "Introduction to Python",
+    "track": "Python",
+    "desc": "Why programming, what Python is, where it is used, features and history."
+  },
+  {
+    "start": "00:24:14",
+    "title": "Installing Python & setting up your editor",
+    "track": "Python",
+    "desc": "Installing Python, VS Code / Jupyter setup, running your first lines of code."
+  },
+  {
+    "start": "00:54:52",
+    "title": "Data types & numbers",
+    "track": "Python",
+    "desc": "int, float, bool, complex, how Python stores numbers, basic arithmetic."
+  },
+  {
+    "start": "01:13:24",
+    "title": "Strings: basics",
+    "track": "Python",
+    "desc": "Defining strings, quotes, immutability, how strings are stored in memory."
+  },
+  {
+    "start": "01:18:48",
+    "title": "String indexing (positive & negative)",
+    "track": "Python",
+    "desc": "Index from 0 and from -1, off-by-one thinking, common indexing errors."
+  },
+  {
+    "start": "01:32:57",
+    "title": "Slicing & step (stride)",
+    "track": "Python",
+    "desc": "start:stop:step, defaults, negative steps, reversing a string."
+  },
+  {
+    "start": "02:03:04",
+    "title": "Type conversion",
+    "track": "Python",
+    "desc": "Implicit vs explicit conversion, int()/float()/str()/bool() edge cases."
+  },
+  {
+    "start": "02:16:55",
+    "title": "Operators: arithmetic, modulus, floor division",
+    "track": "Python",
+    "desc": "Operands vs operators, % and // behaviour with negatives."
+  },
+  {
+    "start": "02:27:34",
+    "title": "Relational & comparison operators",
+    "track": "Python",
+    "desc": "==, !=, <, >, lexicographic string comparison, chained comparison."
+  },
+  {
+    "start": "02:43:48",
+    "title": "Logical operators",
+    "track": "Python",
+    "desc": "and / or / not, short-circuiting, truthiness of values."
+  },
+  {
+    "start": "02:47:35",
+    "title": "Assignment operators",
+    "track": "Python",
+    "desc": "=, +=, -=, *=, //=, walrus-style thinking."
+  },
+  {
+    "start": "02:58:05",
+    "title": "Identity & membership operators",
+    "track": "Python",
+    "desc": "is / is not (id() and memory), in / not in."
+  },
+  {
+    "start": "03:06:04",
+    "title": "Operator precedence & associativity",
+    "track": "Python",
+    "desc": "Which operator wins, left-to-right vs right-to-left, using parentheses."
+  },
+  {
+    "start": "03:13:43",
+    "title": "String formatting",
+    "track": "Python",
+    "desc": "%, .format(), f-strings, dynamic strings in practice."
+  },
+  {
+    "start": "03:29:00",
+    "title": "Conditional statements: if / else / elif",
+    "track": "Python",
+    "desc": "if, else, elif, nested conditions, indentation, practice questions."
+  },
+  {
+    "start": "03:56:04",
+    "title": "Nested if & conditional problem solving",
+    "track": "Python",
+    "desc": "Real interview-style problems built on nested conditions (loan/EMI style logic)."
+  },
+  {
+    "start": "04:19:34",
+    "title": "Iterative statements: for & while",
+    "track": "Python",
+    "desc": "Loop intuition, while vs for, loop variables, dry runs."
+  },
+  {
+    "start": "04:30:40",
+    "title": "break, continue & loop control",
+    "track": "Python",
+    "desc": "Stopping and skipping inside loops, nested loop control, common infinite-loop bugs."
+  },
+  {
+    "start": "04:54:05",
+    "title": "for over strings, range() & step",
+    "track": "Python",
+    "desc": "Iterating characters, range(start, stop, step), stride like slicing."
+  },
+  {
+    "start": "05:20:54",
+    "title": "Nested loops & patterns",
+    "track": "Python",
+    "desc": "Loops inside loops, pattern printing, time-complexity intuition."
+  },
+  {
+    "start": "05:33:45",
+    "title": "Data structures: overview",
+    "track": "Python",
+    "desc": "Why data structures exist, mutable vs immutable, choosing the right one."
+  },
+  {
+    "start": "05:43:32",
+    "title": "Lists: characteristics & operations",
+    "track": "Python",
+    "desc": "Ordered, mutable, mixed types, indexing/slicing, iterating, memory/aliasing."
+  },
+  {
+    "start": "06:01:01",
+    "title": "Functions on lists",
+    "track": "Python",
+    "desc": "len, sum, min, max, sorted, any/all and how they behave on lists."
+  },
+  {
+    "start": "06:12:01",
+    "title": "List methods",
+    "track": "Python",
+    "desc": "append, extend, insert, index, count, reverse, sort, pop, copy."
+  },
+  {
+    "start": "06:28:31",
+    "title": "Copy, aliasing & mutability",
+    "track": "Python",
+    "desc": "Why two names can point at one list, the India Gate address analogy, .copy() vs = ."
+  },
+  {
+    "start": "06:33:24",
+    "title": "List comprehension",
+    "track": "Python",
+    "desc": "Syntax, filtering with if, if-else expressions, nested comprehensions."
+  },
+  {
+    "start": "06:48:25",
+    "title": "Tuples",
+    "track": "Python",
+    "desc": "Immutability, packing/unpacking, tuple methods, when to prefer tuples."
+  },
+  {
+    "start": "07:17:46",
+    "title": "Sets",
+    "track": "Python",
+    "desc": "Unique elements, unordered, set operations, add/remove/discard, unions & differences."
+  },
+  {
+    "start": "07:48:43",
+    "title": "Dictionaries",
+    "track": "Python",
+    "desc": "Key-value model, accessing, updating, iterating, duplicate-key behaviour."
+  },
+  {
+    "start": "08:17:16",
+    "title": "Dictionary comprehension & JSON",
+    "track": "Python",
+    "desc": "Building dicts in one line, JSON as a data-exchange format."
+  },
+  {
+    "start": "08:21:16",
+    "title": "String functions & methods",
+    "track": "Python",
+    "desc": "upper, lower, split, join, strip, replace, isalpha/isalnum, startswith etc."
+  },
+  {
+    "start": "08:41:37",
+    "title": "Defining your own functions",
+    "track": "Python",
+    "desc": "def, return vs None, parameters vs arguments, docstrings."
+  },
+  {
+    "start": "09:09:50",
+    "title": "Types of arguments",
+    "track": "Python",
+    "desc": "Positional, default, keyword, *args and **kwargs."
+  },
+  {
+    "start": "09:42:08",
+    "title": "Scope: local vs global",
+    "track": "Python",
+    "desc": "LEGB intuition, global keyword, why shadowing bites you."
+  },
+  {
+    "start": "09:56:12",
+    "title": "Functions as first-class citizens",
+    "track": "Python",
+    "desc": "Store, pass, return functions; higher-order functions."
+  },
+  {
+    "start": "10:21:47",
+    "title": "Lambda functions",
+    "track": "Python",
+    "desc": "lambda syntax, with map/filter/sorted, when not to use it."
+  },
+  {
+    "start": "10:49:01",
+    "title": "AI vocabulary: why it matters",
+    "track": "AI",
+    "desc": "The terms you must be able to explain: AI, agentic AI, RAG, MCP, context engineering, hallucination, transformers."
+  },
+  {
+    "start": "10:50:15",
+    "title": "What AI really is",
+    "track": "AI",
+    "desc": "AI vs ML vs deep learning vs generative AI, levels of intelligence."
+  },
+  {
+    "start": "10:57:50",
+    "title": "Tokens, prompting & tokenization",
+    "track": "AI",
+    "desc": "How text is broken into tokens, why prompting works, prompt structure."
+  },
+  {
+    "start": "11:07:36",
+    "title": "Hallucination",
+    "track": "AI",
+    "desc": "Why models invent facts and how RAG/grounding reduce it."
+  },
+  {
+    "start": "11:12:06",
+    "title": "Context engineering",
+    "track": "AI",
+    "desc": "What goes into the context window, tools, memory and examples."
+  },
+  {
+    "start": "11:16:28",
+    "title": "Tools & function calling",
+    "track": "AI",
+    "desc": "Giving an LLM abilities beyond text, the tool-call loop."
+  },
+  {
+    "start": "11:20:39",
+    "title": "Token as currency",
+    "track": "AI",
+    "desc": "Cost and latency of tokens, why context length is expensive."
+  },
+  {
+    "start": "11:26:25",
+    "title": "Vectorization & embeddings",
+    "track": "AI",
+    "desc": "Turning text into vectors, similarity search, semantic retrieval."
+  },
+  {
+    "start": "11:31:35",
+    "title": "Context window",
+    "track": "AI",
+    "desc": "How much a model can 'see' at once and what happens when it overflows."
+  },
+  {
+    "start": "11:39:41",
+    "title": "Parameters",
+    "track": "AI",
+    "desc": "Weights inside a model, size vs capability, training cost."
+  },
+  {
+    "start": "11:46:32",
+    "title": "Attention",
+    "track": "AI",
+    "desc": "How a model decides which earlier tokens matter."
+  },
+  {
+    "start": "11:52:19",
+    "title": "Transformers",
+    "track": "AI",
+    "desc": "The architecture behind modern LLMs, self-attention and generation."
+  },
+  {
+    "start": "12:04:14",
+    "title": "Fine-tuning",
+    "track": "AI",
+    "desc": "Adapting a base model to your data, when fine-tuning beats prompting."
+  },
+  {
+    "start": "12:11:32",
+    "title": "RLHF",
+    "track": "AI",
+    "desc": "Training a model with human feedback, the 'puppy training' analogy."
+  },
+  {
+    "start": "12:16:05",
+    "title": "RAG (Retrieval Augmented Generation)",
+    "track": "AI",
+    "desc": "Vector DBs vs document-based RAG, chunking, retrieval pipeline, grounding answers."
+  },
+  {
+    "start": "12:27:25",
+    "title": "MCP (Model Context Protocol)",
+    "track": "AI",
+    "desc": "A standard way to connect models to tools and data sources."
+  },
+  {
+    "start": "12:38:21",
+    "title": "Agentic AI, multimodal & beyond chat",
+    "track": "AI",
+    "desc": "Planning, multi-step actions, multimodality, what makes an agent an agent."
+  }
+]

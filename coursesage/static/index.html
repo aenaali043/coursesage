@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CourseSage — Python + AI course agent · by Aena Ali</title>
+<link rel="icon" type="image/png" href="/avatar.png" />
+<style>
+  :root {
+    --bg: #0d1117; --panel: #161b22; --panel-2: #1c2430;
+    --line: #263141; --text: #e6edf3; --muted: #8b98a8;
+    --accent: #a371f7; --accent-2: #3fb950; --warn: #d29922;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: radial-gradient(1200px 600px at 20% -10%, #17233a 0%, var(--bg) 55%);
+    color: var(--text); font: 15px/1.65 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh; display: flex; flex-direction: column;
+  }
+  header {
+    padding: 18px 24px; border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    background: rgba(13,17,23,.85); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 5;
+  }
+  .logo { font-weight: 700; letter-spacing: .3px; }
+  .logo span { color: var(--accent); }
+  .badge {
+    font-size: 12px; color: var(--muted); border: 1px solid var(--line);
+    border-radius: 999px; padding: 2px 10px;
+  }
+  main { flex: 1; width: 100%; max-width: 900px; margin: 0 auto; padding: 22px 20px 140px; }
+  .msg { display: flex; gap: 12px; margin-bottom: 22px; }
+  .avatar {
+    flex: 0 0 34px; height: 34px; border-radius: 9px; display: grid; place-items: center;
+    font-size: 13px; font-weight: 700; background: var(--panel-2); border: 1px solid var(--line);
+  }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+  .brand-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--line); }
+  .msg.user .avatar { background: #1f2a3a; color: var(--accent); }
+  .msg.agent .avatar { background: #14251a; color: var(--accent-2); }
+  .bubble { flex: 1; min-width: 0; }
+  .bubble .who { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .content { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; overflow-wrap: anywhere; }
+  .msg.user .content { background: #131a26; }
+  .content pre {
+    background: #0b1017; border: 1px solid var(--line); border-radius: 9px;
+    padding: 12px; overflow-x: auto; font-size: 13px;
+  }
+  .content code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; }
+  .content p:first-child { margin-top: 0; } .content p:last-child { margin-bottom: 0; }
+  .content a { color: var(--accent); }
+  .content ul, .content ol { padding-left: 22px; }
+  .trace { margin-top: 8px; font-size: 12px; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px; background: #121a25; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .suggest {
+    cursor: pointer; background: var(--panel); border: 1px solid var(--line); color: var(--text);
+    border-radius: 999px; padding: 7px 13px; font-size: 13px;
+  }
+  .suggest:hover { border-color: var(--accent); color: var(--accent); }
+  footer {
+    position: fixed; bottom: 0; left: 0; right: 0; padding: 14px 20px 18px;
+    background: linear-gradient(180deg, transparent, rgba(13,17,23,.96) 40%);
+  }
+  .composer { max-width: 900px; margin: 0 auto; display: flex; gap: 10px; align-items: flex-end; }
+  textarea {
+    flex: 1; resize: none; min-height: 52px; max-height: 180px; padding: 14px 16px;
+    background: var(--panel); color: var(--text); border: 1px solid var(--line);
+    border-radius: 12px; font: inherit; outline: none;
+  }
+  textarea:focus { border-color: var(--accent); }
+  button.send {
+    height: 52px; padding: 0 20px; border-radius: 12px; border: 1px solid #6d28d9;
+    background: linear-gradient(180deg, #8b5cf6, #7c3aed); color: #fff; font-weight: 600; cursor: pointer;
+  }
+  button.send:disabled { opacity: .5; cursor: default; }
+  .hint { max-width: 900px; margin: 6px auto 0; font-size: 11px; color: var(--muted); text-align: right; }
+  .typing { color: var(--muted); font-size: 13px; }
+  .err { color: #ff7b72; }
+</style>
+</head>
+<body>
+<header>
+  <img class="brand-avatar" src="/avatar.png" alt="Aena Ali" />
+  <div class="logo">Course<span>Sage</span></div>
+  <div class="badge">by <strong style="color:var(--accent)">Aena Ali</strong></div>
+  <div class="badge" id="modelBadge">connecting…</div>
+  <div class="badge">Python 0:00–10:48 · AI 10:49–13:02</div>
+</header>
+
+<main id="chat">
+  <div class="chips" id="chips">
+    <div class="suggest">Explain slicing vs indexing with examples</div>
+    <div class="suggest">Why is a list mutable but a tuple not?</div>
+    <div class="suggest">Quiz me on dictionaries (5 questions)</div>
+    <div class="suggest">7-day plan to finish the Python part</div>
+    <div class="suggest">What is RAG and how is it different from fine-tuning?</div>
+  </div>
+</main>
+
+<footer>
+  <div class="composer">
+    <textarea id="input" rows="1" placeholder="Ask about Python, paste code, or request a quiz / plan…"></textarea>
+    <button class="send" id="send">Send</button>
+  </div>
+  <div class="hint">Built by Aena Ali — grounded in the course transcript, answers cite video timestamps.</div>
+</footer>
+
+<script>
+const chat = document.getElementById('chat');
+const input = document.getElementById('input');
+const send = document.getElementById('send');
+const chips = document.getElementById('chips');
+const badge = document.getElementById('modelBadge');
+
+if (location.protocol === 'file:') {
+  badge.textContent = 'no backend — run: python run.py serve';
+  badge.style.color = 'var(--warn)';
+}
+fetch('/api/health').then(r => r.json()).then(d => {
+  badge.textContent = d.model + ' · ' + d.kb.chapters + ' chapters';
+}).catch(() => { badge.textContent = 'backend offline — run: python run.py serve'; badge.style.color = 'var(--warn)'; });
+
+function esc(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function renderMarkdown(text) {
+  const blocks = [];
+  let html = esc(text).replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
+    blocks.push('<pre><code>' + code.replace(/\n$/, '') + '</code></pre>');
+    return '\u0000' + (blocks.length - 1) + '\u0000';
+  });
+  html = html
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/^### (.*)$/gm, '<strong>$1</strong>')
+    .replace(/^## (.*)$/gm, '<strong>$1</strong>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[([^\]]+)\]\((https?:[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(/^[-*] (.*)$/gm, '<li>$1</li>')
+    .replace(/(<li>[\s\S]*?<\/li>)(?!\s*<li>)/g, '<ul>$1</ul>')
+    .replace(/\n{2,}/g, '</p><p>')
+    .replace(/\n/g, '<br>');
+  html = '<p>' + html + '</p>';
+  return html.replace(/\u0000(\d+)\u0000/g, (_, i) => blocks[Number(i)]);
+}
+
+function typewriter(el, text) {
+  const words = text.split(/\s+/);
+  let i = 0;
+  const tick = setInterval(() => {
+    i += 3;
+    el.textContent = words.slice(0, i).join(' ');
+    el.parentElement.scrollIntoView({ block: 'end' });
+    if (i >= words.length) {
+      clearInterval(tick);
+      el.innerHTML = renderMarkdown(text);
+    }
+  }, 40);
+}
+
+function addMessage(role, content, tools, isError) {
+  const wrap = document.createElement('div');
+  wrap.className = 'msg ' + role;
+  const who = role === 'user' ? 'you' : 'CourseSage';
+  const body = role === 'user'
+    ? '<div class="content">' + esc(content).replace(/\n/g, '<br>') + '</div>'
+    : isError
+      ? '<div class="content err">' + esc(content).replace(/\n/g, '<br>') + '</div>'
+      : '<div class="content"></div>';
+  const trace = tools && tools.length
+    ? '<div class="trace">' + tools.map(t => '<span class="chip">' + t.name + '(' + esc(String(t.args.query || t.args.start || '')) + ')</span>').join('') + '</div>'
+    : '';
+  const avatar = role === 'user' ? 'YOU' : '<img src="/avatar.png" alt="Aena Ali">';
+  wrap.innerHTML = '<div class="avatar">' + avatar + '</div>' +
+    '<div class="bubble"><div class="who">' + who + '</div>' + body + trace + '</div>';
+  chat.appendChild(wrap);
+  if (role === 'agent' && !isError) {
+    const contentEl = wrap.querySelector('.content');
+    if (content.length < 120) {
+      contentEl.innerHTML = renderMarkdown(content);
+    } else {
+      typewriter(contentEl, content);
+    }
+  }
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'end' });
+}
+
+async function ask(text) {
+  if (!text.trim()) return;
+  if (chips) chips.remove();
+  addMessage('user', text);
+  input.value = '';
+  autosize();
+  send.disabled = true;
+
+  const typing = document.createElement('div');
+  typing.className = 'msg agent';
+  typing.innerHTML = '<div class="avatar"><img src="/avatar.png" alt="Aena Ali"></div><div class="bubble"><div class="who">CourseSage</div>' +
+    '<div class="content typing">thinking…</div></div>';
+  chat.appendChild(typing);
+  typing.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+  const statusEl = typing.querySelector('.typing');
+  const waiting = ['thinking…', 'searching the course…', 'reading the transcript…', 'writing your answer…'];
+  let wi = 0;
+  const spin = setInterval(() => { wi = (wi + 1) % waiting.length; statusEl.textContent = waiting[wi]; }, 4000);
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text })
+    });
+    const data = await res.json();
+    clearInterval(spin);
+    typing.remove();
+    if (!res.ok) {
+      addMessage('agent', data.error || 'Request failed', null, true);
+    } else {
+      addMessage('agent', data.answer, data.tools);
+    }
+  } catch (e) {
+    clearInterval(spin);
+    typing.remove();
+    const offline = e instanceof TypeError;
+    addMessage('agent', offline
+      ? 'Backend not reachable. Start it with "python run.py serve" and open http://127.0.0.1:8000 — not the .html file directly.'
+      : String(e), null, true);
+  }
+  send.disabled = false;
+  input.focus();
+}
+
+function autosize() {
+  input.style.height = 'auto';
+  input.style.height = Math.min(input.scrollHeight, 180) + 'px';
+}
+
+send.addEventListener('click', () => ask(input.value));
+input.addEventListener('input', autosize);
+input.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(input.value); }
+});
+document.querySelectorAll('.suggest').forEach(el => el.addEventListener('click', () => ask(el.textContent)));
+</script>
+</body>
+</html>
