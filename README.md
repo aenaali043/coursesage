@@ -1,6 +1,6 @@
 # CourseSage — an AI study agent built on one Python + AI course
 
-**Built by Aena Ali** · Python 3.10+ · zero dependencies
+**Built by [Aena Ali](https://www.linkedin.com/in/aena-ali-35470b3aa)** · Python 3.10+ · zero dependencies
 
 CourseSage is a working agent, not a prompt: it retrieves from the video transcript,
 runs code to check what Python actually does, cites the timestamp it used, and can write
@@ -190,4 +190,4 @@ note persistence, and both agent modes against `examples/mock_llm.py`. No API ke
 
 ## License
 
-MIT — see [LICENSE](LICENSE). Built by **Aena Ali**.
+MIT — see [LICENSE](LICENSE). Built by **[Aena Ali](https://www.linkedin.com/in/aena-ali-35470b3aa)**.
