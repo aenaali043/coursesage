@@ -10,6 +10,7 @@
 
 from __future__ import annotations
 
+import os
 import sys
 
 from coursesage.cli import main as chat_main
@@ -27,8 +28,9 @@ def main() -> int:
     if command == "serve":
         from coursesage.server import serve
 
-        port = int(args[1]) if len(args) > 1 and args[1].isdigit() else 8000
-        serve(port=port)
+        port = int(args[1]) if len(args) > 1 and args[1].isdigit() else int(os.environ.get("PORT", "8000"))
+        host = os.environ.get("HOST") or ("0.0.0.0" if os.environ.get("PORT") else "127.0.0.1")
+        serve(host=host, port=port)
         return 0
 
     if command == "outline":
