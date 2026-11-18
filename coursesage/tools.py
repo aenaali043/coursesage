@@ -12,6 +12,8 @@ from pathlib import Path
 
 from .config import DATA_DIR
 from .kb import CourseKB, parse_timestamp
+from .grader import grade
+from .problems import PROBLEMS, chapter_reference, get_problem, list_problems
 
 NOTES_PATH = DATA_DIR / "notes.md"
 
@@ -124,6 +126,52 @@ class ToolBox:
                     },
                 },
             },
+            {
+                "type": "function",
+                "function": {
+                    "name": "course_problems",
+                    "description": (
+                        "List interview-style practice problems that are grounded in the course "
+                        "chapters. Use this whenever the learner asks for problems, exercises, "
+                        "DSA practice, or a challenge. Each problem carries the chapter that "
+                        "teaches the concept, so you can cite its timestamp."
+                    ),
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "topic": {
+                                "type": "string",
+                                "description": "Keyword filter: concept, title or chapter (e.g. lists, dictionary, strings).",
+                            },
+                            "difficulty": {
+                                "type": "string",
+                                "enum": ["easy", "medium", "hard"],
+                                "description": "Optional difficulty filter.",
+                            },
+                            "limit": {"type": "integer", "description": "How many problems to return (1-10).", "default": 5},
+                        },
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "grade_solution",
+                    "description": (
+                        "Run the learner's solution against the hidden tests of a practice "
+                        "problem and report which tests passed. Use this after the learner "
+                        "submits code for a problem from `course_problems`."
+                    ),
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "problem_id": {"type": "string", "description": "The problem id, e.g. 'two-sum'."},
+                            "code": {"type": "string", "description": "The learner's full Python source code."},
+                        },
+                        "required": ["problem_id", "code"],
+                    },
+                },
+            },
         ]
 
     def call(self, name: str, args: dict) -> dict:
@@ -191,6 +239,28 @@ class ToolBox:
             blocks = [b for b in text.split("\n## ") if query.lower() in b.lower()]
             text = "\n## ".join(blocks) if blocks else f"No note matching '{query}'."
         return {"notes": text[-6000:]}
+
+    def _tool_course_problems(
+        self, topic: str | None = None, difficulty: str | None = None, limit: int = 5
+    ) -> dict:
+        rows = list_problems(topic=topic, difficulty=difficulty, limit=limit)
+        if not rows:
+            return {"problems": [], "note": "No problem matched. Call it without a topic to see the whole bank."}
+        return {
+            "count": len(rows),
+            "problems": [
+                {**p.to_dict(), "course": chapter_reference(self.kb, p)} for p in rows
+            ],
+        }
+
+    def _tool_grade_solution(self, problem_id: str, code: str) -> dict:
+        problem = get_problem(problem_id)
+        if problem is None:
+            return {
+                "error": f"Unknown problem '{problem_id}'.",
+                "available": [p.id for p in PROBLEMS],
+            }
+        return grade(problem, code)
 
 
 def dumps(obj: dict) -> str:

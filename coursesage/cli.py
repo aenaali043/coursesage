@@ -26,6 +26,8 @@ HELP = """commands
   /search <query>       raw transcript search
   /quiz <topic> [n]     generate a quiz
   /plan <topic> [days]  generate a study plan
+  /problems [topic] [n] interview-style practice problems (topic, easy|medium|hard, count)
+  /grade <id>           run your solution for a problem against the hidden tests
   /notes                show saved notes
   /steps <n>            set the tool-call budget (default 6)
   /verbose              toggle tool tracing
@@ -139,6 +141,26 @@ def main(argv: list[str] | None = None) -> int:
                     topic_words.append(token)
             topic = " ".join(topic_words) or "the whole Python + AI course"
             _answer(agent, PLAN_TEMPLATE.format(topic=topic, days=days))
+            continue
+
+        if line.startswith("/grade"):
+            rest = line[len("/grade"):].strip()
+            if "```" not in rest:
+                problem_id = rest.split()[0] if rest.split() else ""
+                print("paste your solution, then type END on its own line:")
+                code_lines: list[str] = []
+                while True:
+                    try:
+                        entry = input("   ... ").rstrip()
+                    except (EOFError, KeyboardInterrupt):
+                        break
+                    if entry.strip() == "END":
+                        break
+                    code_lines.append(entry)
+                body = "\n".join(code_lines)
+                _answer(agent, f"/grade {problem_id}\n```\n{body}\n```")
+                continue
+            _answer(agent, line)
             continue
 
         _answer(agent, line)

@@ -11,6 +11,8 @@ from typing import Callable
 from .config import Settings
 from .kb import CourseKB
 from .llm import LLMClient, LLMError
+from .grader import grade
+from .problems import format_grade, format_problem_list, get_problem, list_problems
 from .prompts import SYSTEM_PROMPT, TEXT_TOOL_PROTOCOL
 from .tools import ToolBox, dumps
 
@@ -18,6 +20,36 @@ Event = Callable[[str, dict], None]
 
 TOOL_HEAD_RE = re.compile(r"TOOL:\s*([a-zA-Z_][\w]*)\s*(?:[\r\n]+)?\s*ARGS:\s*", re.S)
 TOOL_JSON_RE = re.compile(r'```(?:json)?\s*(\{"(?:tool|name)".*?\})\s*```', re.S)
+
+
+def _parse_problem_args(rest: str) -> tuple[str | None, str | None, int]:
+    """Read `/problems <topic> [easy|medium|hard] [n]` into its parts."""
+    topic_words: list[str] = []
+    difficulty: str | None = None
+    count = 5
+    for token in rest.strip().split():
+        lowered = token.lower()
+        if lowered in {"easy", "medium", "hard"}:
+            difficulty = lowered
+        elif token.isdigit():
+            count = max(1, min(int(token), 10))
+        else:
+            topic_words.append(token)
+    topic = " ".join(topic_words) or None
+    return topic, difficulty, count
+
+
+def _split_code(rest: str) -> tuple[str, str]:
+    """Split `/grade <id> <code>` into the problem id and the source code."""
+    if "```" in rest:
+        head, _, tail = rest.partition("```")
+        code = tail.rsplit("```", 1)[0]
+        if code.strip().startswith("python"):
+            code = code.strip()[len("python"):]
+        return head.strip(), code.strip("\n")
+    problem_id, _, code = rest.strip().partition(" ")
+    return problem_id.strip(), code.strip()
+
 
 
 @dataclass
@@ -69,6 +101,10 @@ class CourseAgent:
 
     # --------------------------------------------------------------------- ask
     def ask(self, user_message: str) -> AgentReply:
+        local = self._local_command(user_message)
+        if local is not None:
+            return local
+
         self.messages.append({"role": "user", "content": user_message})
         used: list[dict] = []
         repeat: dict[str, int] = {}
@@ -135,6 +171,54 @@ class CourseAgent:
         return AgentReply(text=text, steps=steps, tool_calls=used, mode=self.mode)
 
     # ------------------------------------------------------------------ internals
+    def _local_command(self, message: str) -> AgentReply | None:
+        """Serve /problems and /grade locally, without spending a model call."""
+        text = message.strip()
+        if not text.startswith("/"):
+            return None
+        head, _, rest = text.partition(" ")
+        head = head.lower()
+
+        if head == "/problems":
+            topic, difficulty, count = _parse_problem_args(rest)
+            rows = list_problems(topic=topic, difficulty=difficulty, limit=count)
+            return AgentReply(
+                text=format_problem_list(self.kb, rows),
+                steps=0,
+                tool_calls=[],
+                mode="local",
+            )
+
+        if head == "/grade":
+            problem_id, code = _split_code(rest)
+            problem = get_problem(problem_id)
+            if problem is None:
+                return AgentReply(
+                    text=f"Unknown problem '{problem_id}'. Run /problems to see the list.",
+                    steps=0,
+                    tool_calls=[],
+                    mode="local",
+                )
+            if not code.strip():
+                return AgentReply(
+                    text=(
+                        f"Paste your solution for `{problem.id}` in a code block after the command:\n\n"
+                        f"/grade {problem.id}\n```\ndef {problem.func}({problem.args}):\n    ...\n```"
+                    ),
+                    steps=0,
+                    tool_calls=[],
+                    mode="local",
+                )
+            result = grade(problem, code)
+            return AgentReply(
+                text=format_grade(result),
+                steps=0,
+                tool_calls=[{"name": "grade_solution", "args": {"problem_id": problem.id}, "result": result}],
+                mode="local",
+            )
+
+        return None
+
     def _chat(self, with_tools: bool = True) -> dict:
         tools = self.toolbox.specs() if (with_tools and self.mode == "native") else None
         started = time.time()
