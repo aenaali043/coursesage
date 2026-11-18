@@ -10,8 +10,8 @@ every answer instead of trusting a confident guess.
 
 <table>
 <tr>
-<td width="50%" align="center"><img src="docs/chat.png" alt="A real CourseSage answer: retrieved passage, code examples, and links back to video timestamps"></td>
-<td width="50%" align="center"><img src="docs/welcome.png" alt="CourseSage welcome screen with suggested questions"></td>
+<td align="center"><img src="docs/chat.png" width="48%" alt="A real CourseSage answer: retrieved passage, code examples, and links back to video timestamps"></td>
+<td align="center"><img src="docs/welcome.png" width="48%" alt="CourseSage welcome screen with suggested questions"></td>
 </tr>
 <tr>
 <td align="center">A real answer, cited to the minute it came from</td>
