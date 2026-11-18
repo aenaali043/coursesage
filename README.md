@@ -2,16 +2,22 @@
 
 **Built by [Aena Ali](https://www.linkedin.com/in/aena-ali-35470b3aa)** · Python 3.10+ · zero dependencies
 
-CourseSage is a working agent, not a prompt: it retrieves from the video transcript,
-runs code to check what Python actually does, cites the timestamp it used, and can write
-quizzes and study plans to disk. It is grounded in **"Best Python + AI Full Course"**
-(`youtube.com/watch?v=J9BI0jGOds8`, 13 h 02 m):
+CourseSage is an AI tutor grounded in one 13-hour Python + AI video course
+(**["Best Python + AI Full Course"](https://youtube.com/watch?v=J9BI0jGOds8)**, 13 h 02 m).
+It answers your questions with the exact video timestamp, runs your code to show what
+Python actually does, and writes quizzes and study plans to disk — so you can verify
+every answer instead of trusting a confident guess.
 
-![A real CourseSage answer: retrieved passage, code examples, and links back to video timestamps](docs/chat.png)
-
-The first screen lists the chapters the agent knows and the questions it is best at:
-
-![CourseSage welcome screen with suggested questions](docs/welcome.png)
+<table>
+<tr>
+<td width="50%" align="center"><img src="docs/chat.png" alt="A real CourseSage answer: retrieved passage, code examples, and links back to video timestamps"></td>
+<td width="50%" align="center"><img src="docs/welcome.png" alt="CourseSage welcome screen with suggested questions"></td>
+</tr>
+<tr>
+<td align="center">A real answer, cited to the minute it came from</td>
+<td align="center">The chapters it knows and what it is best at</td>
+</tr>
+</table>
 
 | track | time range | content |
 |---|---|---|
@@ -37,12 +43,14 @@ python run.py serve           # http://127.0.0.1:8000
 
 Nothing to install: the project uses only the Python standard library.
 
+---
+
 ### Windows one-click
 
 Double-click `start.bat` — it starts the server and opens `http://127.0.0.1:8000`.
 Keep that window open while you use the app.
 
-### Running it on another machine
+### Prerequisites
 
 Anyone who clones this repo needs only:
 
