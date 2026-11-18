@@ -57,7 +57,13 @@ Anyone who clones this repo needs only:
 1. **Python 3.10+** — check with `python --version`
 2. **Their own API key** — copy `.env.example` to `.env` and paste a key.
    `.env` is gitignored, so no key ever reaches GitHub.
-3. `python run.py doctor` then `python run.py serve` (or `start.bat` on Windows)
+3. Run the doctor check, then start the server:
+
+   ```bash
+   python run.py doctor && python run.py serve
+   ```
+
+   (or double-click `start.bat` on Windows)
 
 `127.0.0.1:8000` works only on the machine running the server — there is no public demo URL.
 
@@ -72,7 +78,7 @@ Set `LLM_PROVIDER` in `.env`. Any OpenAI-compatible endpoint works.
 | OpenAI | `LLM_PROVIDER=openai` + `OPENAI_API_KEY` | default, `gpt-4o-mini` |
 | Google Gemini | `LLM_PROVIDER=gemini` + `GEMINI_API_KEY` | free tier, `gemini-3.1-flash-lite` |
 | Ollama (local, free) | `LLM_PROVIDER=ollama` | needs `ollama pull qwen2.5:7b` |
-| Groq / OpenRouter / any | `LLM_PROVIDER=groq` / `openrouter`, or set `LLM_BASE_URL` + `LLM_API_KEY` | pick any hosted model |
+| Groq / OpenRouter / any host | `LLM_PROVIDER=groq` or `LLM_PROVIDER=openrouter` | for any other endpoint set `LLM_BASE_URL` and `LLM_API_KEY` manually |
 
 If a provider rejects native tool calling, the agent automatically falls back to a
 text protocol (`TOOL:` / `ARGS:`) — that is what `TOOL_MODE=auto` does. Force either
@@ -99,6 +105,8 @@ Inside the chat:
 | `/quiz <topic> [n]` | generated quiz with answers |
 | `/plan <topic> [days]` | day-by-day study plan |
 | `/notes` | saved notes |
+| `/problems [topic] [n]` | interview-style practice problems, each tied to a course chapter |
+| `/grade <id>` | run your solution against the hidden tests of a problem |
 | `/steps <n>` | tool-call budget per turn |
 | `/verbose` | show tool tracing |
 | `/reset` | clear the conversation |
@@ -112,6 +120,8 @@ Inside the chat:
 | `transcript_window` | pulls everything said around a timestamp |
 | `run_python` | runs a snippet in a subprocess (10 s timeout) and shows real output |
 | `save_note` / `recall_notes` | persistent study notes in `data/notes.md` |
+| `course_problems` | 15 interview-style problems, each mapped to the chapter that teaches it |
+| `grade_solution` | runs a submission against the hidden tests in a sandboxed subprocess |
 
 The agent decides which to call, may chain several calls in one turn, and is told never to
 invent a timestamp — links can only come from tool output.
@@ -148,6 +158,8 @@ coursesage/
 │   ├── llm.py              urllib client for any /chat/completions endpoint
 │   ├── prompts.py          tutor persona and grounding rules
 │   ├── cli.py, server.py   terminal UI, stdlib HTTP UI
+│   ├── problems.py         15 interview-style problems, each tied to a course chapter
+│   ├── grader.py           runs a learner's solution against the hidden tests
 │   └── static/index.html   single-page chat interface
 ├── examples/mock_llm.py    fake model server for offline testing
 └── tests/test_smoke.py     14 tests, no API key required
@@ -179,11 +191,12 @@ note persistence, and both agent modes against `examples/mock_llm.py`. No API ke
 
 ## Cost and limits
 
+> **Warning:** `run_python` and `grade_solution` execute code on **your machine** with a 10 s
+> timeout and no network sandbox. Do not paste untrusted code. Set `ALLOW_CODE_EXEC=0` in the
+> environment to disable both.
+
 - Each turn is 1–3 model calls; retrieval is local, so context stays small (~4–8 k tokens on
   a search-heavy turn).
-- `run_python` executes code on **your machine** with a 10 s timeout and no network guard.
-  It is a teaching tool: do not paste untrusted code. Set `ALLOW_CODE_EXEC=0` in the
-  environment if you want it disabled.
 - Transcript passages are auto-captioned and contain speech-recognition noise; the prompt
   tells the model to read through it silently rather than quote it.
 - Answers are grounded in this one course. For anything else, the agent says so and switches
@@ -196,8 +209,6 @@ note persistence, and both agent modes against `examples/mock_llm.py`. No API ke
 - Swap BM25 for embeddings: implement `search()` in `kb.py` against an `/embeddings`
   endpoint and keep the same `Hit` shape — nothing else changes.
 - Add a `progress.json` tool that tracks which chapters you finished, and let `/plan` read it.
-- Add a tool that runs a learner's solution against test cases (pytest subprocess) for
-  auto-grading exercises.
 - Point `build_kb.py` at a different transcript and the whole agent retargets to that course.
 
 ---
